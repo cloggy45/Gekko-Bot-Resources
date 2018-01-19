@@ -1,8 +1,8 @@
-
+//Algorithm created by @Mounir for Gekko Bot, join https://discord.gg/VNj9Nn
 
 var convnetjs = require('convnetjs')
 var z = require('zero-fill')
-var stats = require('stats-lite')
+var stats = require('stats-lite')g
 var n = require('numbro')
 var math = require('mathjs')
 const cluster = require('cluster');
