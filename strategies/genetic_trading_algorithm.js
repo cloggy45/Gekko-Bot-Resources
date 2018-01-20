@@ -1,5 +1,5 @@
 //Algorithm created by @Mounir for Gekko Bot, join https://discord.gg/VNj9Nn
-
+// npm install convnetjs  zero-fill  stats-lite numbro mathjs  cluster
 var convnetjs = require('convnetjs')
 var z = require('zero-fill')
 var stats = require('stats-lite')g

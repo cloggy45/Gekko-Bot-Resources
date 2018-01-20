@@ -1,41 +1,69 @@
-// Color Candle
-// Trailing Stop Loss
-
-var TrailingStopLoss = (function () {
+exports.trailingStopLoss = function () {
     var _percent = 0.0;
-    var _longPrice = 0;
+    var _buyPrice = 0;
     var _stopLoss = 0;
+    var _active = false
 
-    var _setStopLoss = function () {
-        _stopLoss = _longPrice * _percent;
+    var init = function (percent, buyPrice) {
+      _percent = percent;
+      _buyPrice = buyPrice;
+      _active = true;
+      _stopLoss = _buyPrice * _percent;
     };
 
-    var setPercent = function (percent) {
-        _percent = percent;
+    var updateStopLoss = function (currentPrice) {
+        _stopLoss = currentPrice * _percent;
     };
 
-    var setLongPrice = function (longPrice) {
-        _longPrice = longPrice;
+    var triggered = function (currentPrice) {
+        return (_stopLoss > currentPrice)
     };
 
-    var triggered = function () {
-        return (_longPrice )
+    var getStopLoss = function () {
+        return _stopLoss;
     };
-
-    return {
-        setBuyPrice : setBuyPrice,
-        setPercent : setPercent,
-        triggered : triggered
+    
+    var resetValues = function () {
+      _percent = 0.0;
+      _buyPrice = 0;
+      _stopLoss = 0;
+      _active = false;
+    };
+  
+    var isActive = function () {
+      return _active;
     }
-})();
+  
+    return {
+        reset : resetValues,
+        get : getStopLoss,
+        create : init,
+        triggered : triggered,
+        update : updateStopLoss,
+        active : isActive
+    }
+};
 
-var test = [10, 23, 24, 56, 70];
+exports.getStochCondition = function getCurrentCondition(stochk, stochd, lowThreshold, highThreshold) {
+  console.log(stochk)
+  console.log(stochd)
+  if (stochk > highThreshold && stochd > highThreshold)
+      return 'overbought';
+    else if (stochk < lowThreshold && stochd < lowThreshold)
+      return 'oversold';
+    else
+      return 'middle';
+  };
 
-var buyPrice = 24
+exports.getTrend = function getCurrentTrendDirection(ema, price) {
+    if (ema > price)
+      return 'uptrend';
+    else if (ema < price)
+      return 'downtrend';
+    else
+      return 'none'
+  };
 
-for (var i = 0; i < test.size; i++) {
-    Helper.trailing_stop_loss.triggered();
-}
-Helper.trailing_stop_loss.triggered();
-
-// indicator history
+  var trending = function isTrending(previousTrend, currentTrend) {
+    return (previousTrend === currentTrend);
+  };
