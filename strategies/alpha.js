@@ -10,7 +10,7 @@ strat.results = {
 
 // Prepare everything our strat needs
 strat.init = function() {
-  //   this.stopLoss = TrailingStopLoss();
+  //this.stopLoss = TrailingStopLoss();
 
   this.market = {
     price: {
@@ -39,8 +39,8 @@ strat.update = function(candle) {
 
 // For debugging purposes.
 strat.log = function() {
-  //   console.log("Stoch Results")
-  //   console.log(this.results.stoch);
+  //console.log("Stoch Results")
+  //console.log(this.results.stoch);
 }
 
 strat.check = function(candle) {
@@ -49,41 +49,44 @@ strat.check = function(candle) {
 
   //todo cleanup
 
+  // Get indicator information
   var currentPriceMovement = helper.getTrend(this.results.shortEma.result, currentPrice);
   var priceMovementTrending = helper.trending(this.market.price.movement, currentPriceMovement);
 
-  var currentStochCondition = helper.getStochCondition(this.results.stoch.stochK, this.results.stoch.stochD, 20, 80)
+  var currentStochCondition = helper.getStochCondition(this.results.stoch.stochK, this.results.stoch.stochD, 20, 80);
   var stochConditionTrending = helper.trending(this.market.stoch.condition, currentStochCondition);
 
   this.market.price.movement = currentPriceMovement;
   this.market.stoch.condition = currentStochCondition;
 
+  // Tally trend duration
   if (priceMovementTrending)
-    this.market.price.duration++
-    else
-      this.market.price.duration = null
+    this.market.price.duration++;
+  else
+    this.market.price.duration = null;
 
   if (stochConditionTrending)
-    this.market.stoch.duration++
+    this.market.stoch.duration++;
   else
-    this.market.stoch.duration = null
+    this.market.stoch.duration = null;
 
-
+  // Create or reset stop-loss
   if (this.market.price.movement === 'uptrend' && this.market.price.duration > 3) {
     if (this.market.stoch.condition === 'oversold' && this.market.stoch.duration > 2) {
       this.advice('long');
-      this.stopLoss.create(0.99, currentPrice)
+      this.stopLoss.create(0.99, currentPrice);
     }
-  } else if (this.market.price.movement === 'downtrend' && this.market.price.duration > 5) {
+  }
+  else if (this.market.price.movement === 'downtrend' && this.market.price.duration > 5) {
     if (this.market.stoch.condition === 'overbought' && this.market.stoch.duration > 1) {
       this.advice('short');
       this.stopLoss.reset();
     }
   }
 
-  // Check  if our stoploss has been triggered.
+  // Check if our stoploss has been triggered.
   if (this.stopLoss.triggered(currentPrice)) {
-    this.advice('short')
+    this.advice('short');
     this.stopLoss.reset();
     console.log("STOP LOSS ACTIVATED");
 
