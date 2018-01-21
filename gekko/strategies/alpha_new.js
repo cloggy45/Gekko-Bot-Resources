@@ -1,4 +1,4 @@
-var helper = require('.ls./helper.js');
+var helper = require('../helper.js');
 var isMatch = require('lodash.ismatch');
 var log = require('../core/log.js');
 
