@@ -215,7 +215,8 @@ method.check = function() {
 
 
                 global.sig0 = global.meanp < global.mean && meanp != 0
-                if (global.sig0 === false  && percentvar > 0.5 )
+                if (global.sig0 === false  && percentvar > 0.5 && this.stochD > this.stochK
+                    && this.stochD < 20)
                    {
 
                           // log.debug("IA - Buy - Predicted variation: ",percentvar);
@@ -233,7 +234,9 @@ method.check = function() {
                           return this.advice('long');
                    }
                 else if
-                (global.sig0 === true && percentvar < -0.5)
+                (global.sig0 === true && percentvar < -0.5 && this.stochD < this.stochK
+                && this.stochD > 80
+                ) 
                 {
 
                       // log.debug("IA - Sell - Predicted variation: ",percentvar);
