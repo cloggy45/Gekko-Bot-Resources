@@ -25,12 +25,9 @@ getOption = function () {
 // let's create our own method
 var method = {};
 options = "Options Set";
-options.period = "1m";
-options.period_length = "1m";
 options.activation_1_type = "regression";
 options.neurons_1 = 35;
 options.depth = 1;
-options.selector = "Gdax.BTC-USD";
 options.min_periods = 1000;
 options.min_predict = 1;
 options.momentum =0.2;
@@ -180,7 +177,7 @@ method.check = function() {
     this.stochD = this.tulipIndicators.stoch.result.stochD; 
 
           //Learn
-          var predict = function(data) {
+            var predict = function(data) {
             var x = new convnetjs.Vol(data);
             var predicted_value = neural.net.forward(x);
             return predicted_value.w[0];
