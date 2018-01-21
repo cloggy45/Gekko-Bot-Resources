@@ -64,7 +64,7 @@ method.init = function() {
           neuralDepth: 4
       }
         neural.net.makeLayers(neural.layer_defs);
-        neural.trainer = new convnetjs.SGDTrainer(neural.net, {learning_rate:0.05, momentum:options.momentum, batch_size:64, l2_decay:options.decay});
+        neural.trainer = new convnetjs.SGDTrainer(neural.net, {learning_rate:0.05, momentum:options.momentum, batch_size:30, l2_decay:options.decay});
       }
 
       
@@ -77,43 +77,49 @@ method.init = function() {
 
 
 var haspredicted = false;
-var predictioncount = 0;
+var predictioncount = 1;
 var maxaccuracy = 0;
 var lowaccuracy = 0;
 var highpeak =6;
 var lowpeak =-100;
+var predictedarray = []
 
 // what happens on every new candle?
 method.update = function(candle) {
     Price.push(candle.close);
     if(Price.length > 2)
     {
-        var tlp = []
-        var tll = []
           
           var my_data = Price;
           var learn = function () {
               for (var i = 0; i < Price.length - 1; i++) {
                 var data = my_data.slice(i, i + 1);
                 var real_value = [my_data[i + 1]];
-                var x = new convnetjs.Vol(data);
+                var x = new convnetjs.Vol([predictioncount,data]);
                 neural.trainer.train(x, real_value);
                 var predicted_values =neural.net.forward(x);
-                var accuracy = predicted_values.w[0] -real_value
-                var accuracymatch = predicted_values.w[0] == real_value;
-                var rewardtheybitches = neural.net.backward(accuracymatch);
-                if(accuracy > 0)
-                {
-                  if(accuracy > maxaccuracy) {maxaccuracy = accuracy} 
-                }
-                if(accuracy <0)
-                {
-                  if(accuracy < lowaccuracy) {lowaccuracy = accuracy} 
-
-                }
                 
-                predictioncount++;
-                haspredicted = true;
+
+
+
+                var real_direction = data - real_value >= 0;
+                var pred_direction = predicted_values.w[0] - real_value >= 0;
+                var accuracy = predicted_values.w[0] -real_value
+                var accuracymatch = real_direction == pred_direction;
+                var rewardtheybitches = neural.net.backward(accuracymatch);
+                predictedarray.push(predicted_values.w[0]);
+                  if(accuracy > 0)
+                  {
+                    if(accuracy > maxaccuracy) {maxaccuracy = accuracy} 
+                  }
+                  if(accuracy <0)
+                  {
+                    if(accuracy < lowaccuracy) {lowaccuracy = accuracy} 
+  
+                  }
+                  
+                  predictioncount++;
+                  haspredicted = true;
 
               }
             }
@@ -158,6 +164,20 @@ ManageSize = function(){
       Price.splice(0,calculatedpercent);
 
 }
+
+function median(values) {
+
+  values.sort( function(a,b) {return a - b;} );
+
+  var half = Math.floor(values.length/2);
+
+  if(values.length % 2)
+      return values[half];
+  else
+      return (values[half-1] + values[half]) / 2.0;
+}
+
+
 method.check = function() {
     if(hasbought)
     {
@@ -173,11 +193,14 @@ method.check = function() {
 
           //Learn
           var predict = function(data) {
-            var x = new convnetjs.Vol(data);
+            predictioncount++;
+            var x = new convnetjs.Vol([predictioncount,data]);
             var predicted_value = neural.net.forward(x);
+            log.debug("Predicted : ",predicted_value.w[0]);
             return predicted_value.w[0];
           }
-
+          var predictedvariationmean = median(predictedarray)
+        
           this.HCL = (this.candle.high + this.candle.close + this.candle.open) /3;
      
 
@@ -185,10 +208,10 @@ method.check = function() {
           {
             prediction = predict(this.candle.close)
             mean = Price[Price.length -1];
-            oldmean = prediction
-            meanp = math.mean(prediction, mean)
-            global.meanp = meanp
-            global.mean = mean
+            oldmean = prediction;
+            meanp = math.mean(prediction, mean);
+            global.meanp = meanp;
+            global.mean = mean;
             var percentvar = (meanp-mean)/mean * 100;
 
             if(percentvar < 0) { 
