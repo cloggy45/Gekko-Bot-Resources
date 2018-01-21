@@ -53,6 +53,7 @@ strat.init = function() {
   this.addTulipIndicator('myStoch', 'stoch', this.settings.myStoch);
   this.addTulipIndicator('myLongEma', 'ema', this.settings.myLongEma);
   this.addTulipIndicator('myShortEma', 'ema', this.settings.myShortEma);
+  this.addTulipIndicator('myAdx', 'adx', this.settings.myAdx);
 }
 
 // What happens on every new candle?
