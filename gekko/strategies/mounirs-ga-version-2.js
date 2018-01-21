@@ -6,7 +6,7 @@ var math = require('mathjs')
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 var _ = require('lodash');
-var helper = require('./helper.js')
+var helper = require('../helper.js')
 
 const deepqlearn = require('convnetjs/build/deepqlearn');
 
