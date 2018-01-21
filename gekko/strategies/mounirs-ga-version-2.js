@@ -177,7 +177,7 @@ method.check = function() {
     this.stochD = this.tulipIndicators.stoch.result.stochD; 
 
           //Learn
-            var predict = function(data) {
+          var predict = function(data) {
             var x = new convnetjs.Vol(data);
             var predicted_value = neural.net.forward(x);
             return predicted_value.w[0];
