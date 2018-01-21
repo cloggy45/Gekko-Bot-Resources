@@ -26,7 +26,7 @@ getOption = function () {
 var method = {};
 options = "Options Set";
 options.activation_1_type = "regression";
-options.neurons_1 = 35;
+options.neurons_1 = 15;
 options.depth = 1;
 options.min_periods = 1000;
 options.min_predict = 1;
@@ -50,11 +50,6 @@ neural = undefined;
 method.init = function() {
     this.requiredHistory = this.tradingAdvisor.historySize;
     this.addTulipIndicator('stoch', 'stoch', stochParams);
-    this.addTulipIndicator('myfisher', 'fisher',{
-      fisher_up : 1,
-      fisher_down : -1,
-      optInTimePeriod: 9
-    });
   
     if (neural === undefined) {
         // Create the net the first time it is needed and NOT on every run
@@ -188,8 +183,7 @@ method.check = function() {
 
           if(haspredicted & predictioncount > 1000)
           {
-            var item = Price;
-            prediction = predict(item)
+            prediction = predict(this.candle.close)
             mean = Price[Price.length -1];
             oldmean = prediction
             meanp = math.mean(prediction, mean)
@@ -219,7 +213,7 @@ method.check = function() {
                     && this.stochD < 20)
                    {
 
-                          // log.debug("IA - Buy - Predicted variation: ",percentvar);
+                          log.debug("IA - Buy - Predicted variation: ",percentvar);
                           hasbought = true;
                           meanp = 0
                           mean = 0;
@@ -235,11 +229,11 @@ method.check = function() {
                    }
                 else if
                 (global.sig0 === true && percentvar < -0.5 && this.stochD < this.stochK
-                && this.stochD > 80
+                && this.stochD > 60
                 ) 
                 {
 
-                      // log.debug("IA - Sell - Predicted variation: ",percentvar);
+                      log.debug("IA - Sell - Predicted variation: ",percentvar);
                       meanp = 0
                       mean = 0;
                       hasbought = false;
