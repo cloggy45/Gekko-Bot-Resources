@@ -179,7 +179,7 @@ method.check = function() {
           }
 
           this.HCL = (this.candle.high + this.candle.close + this.candle.open) /3;
-
+     
 
           if(haspredicted & predictioncount > 1000)
           {
