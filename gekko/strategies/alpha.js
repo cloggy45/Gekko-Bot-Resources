@@ -1,4 +1,6 @@
-var helper = require('../helper.js')
+var helper = require('./helper.js')
+var isMatch = require('lodash.ismatch');
+
 
 var strat = {};
 
@@ -8,22 +10,45 @@ strat.results = {
   shortEma: 0
 }
 
-// Prepare everything our strat needs
 strat.init = function() {
-  //this.stopLoss = TrailingStopLoss();
-
+  
+  // set market conditions, these will be updated on each candle
   this.market = {
     price: {
       movement: 'none',
-      duration: null
+      persistance: null
     },
     stoch: {
       condition: 'none',
-      duration: null
+      persistance: null
     },
-    crossover: 'none',
   };
-
+  
+  // These conditions determine when to buy or to sell.
+  this.condition = {
+    sell : {
+      price : {
+        movement : 'downtrend',
+        persistance : 1
+      },
+      stoch : {
+        condition : 'overbought',
+        persistance : 1
+      },
+    },
+    buy : {
+      price : {
+        movement : 'downtrend',
+        persistance : 1
+      },
+      stoch : {
+        condition : 'oversold',
+        persistance : 1
+      }
+    }
+  }
+  
+  // Initalize our indicators and assign our helper.
   this.stopLoss = helper.trailingStopLoss();
   this.addTulipIndicator('myStoch', 'stoch', this.settings.myStoch);
   this.addTulipIndicator('myLongEma', 'ema', this.settings.myLongEma);
@@ -37,66 +62,52 @@ strat.update = function(candle) {
   this.results.shortEma = this.tulipIndicators.myShortEma.result;
 }
 
-// For debugging purposes.
-strat.log = function() {
-  //console.log("Stoch Results")
-  //console.log(this.results.stoch);
-}
-
 strat.check = function(candle) {
-
+  
   var currentPrice = candle.close;
-
-  //todo cleanup
-
-  // Get indicator information
+  
   var currentPriceMovement = helper.getTrend(this.results.shortEma.result, currentPrice);
   var priceMovementTrending = helper.trending(this.market.price.movement, currentPriceMovement);
 
-  var currentStochCondition = helper.getStochCondition(this.results.stoch.stochK, this.results.stoch.stochD, 20, 80);
+  var currentStochCondition = helper.getStochCondition(this.results.stoch.stochK, this.results.stoch.stochD, this.settings.myStoch.lowThreshold, this.settings.myStoch.highThreshold)
   var stochConditionTrending = helper.trending(this.market.stoch.condition, currentStochCondition);
 
   this.market.price.movement = currentPriceMovement;
   this.market.stoch.condition = currentStochCondition;
 
-  // Tally trend duration
   if (priceMovementTrending)
-    this.market.price.duration++;
-  else
-    this.market.price.duration = null;
+    this.market.price.persistance++
+    else
+      this.market.price.persistance = null
 
   if (stochConditionTrending)
-    this.market.stoch.duration++;
+    this.market.stoch.persistance++
   else
-    this.market.stoch.duration = null;
+    this.market.stoch.persistance = null
+  
+  // Do our buy conditions match current market conditions?
 
-  // Create or reset stop-loss
-  if (this.market.price.movement === 'uptrend' && this.market.price.duration > 3) {
-    if (this.market.stoch.condition === 'oversold' && this.market.stoch.duration > 2) {
-      this.advice('long');
-      this.stopLoss.create(0.99, currentPrice);
-    }
-  }
-  else if (this.market.price.movement === 'downtrend' && this.market.price.duration > 5) {
-    if (this.market.stoch.condition === 'overbought' && this.market.stoch.duration > 1) {
-      this.advice('short');
-      this.stopLoss.reset();
-    }
+  if(isMatch(this.market, this.condition.buy)) {
+    console.log('Going Long');
+    this.advice('long');
+    this.stopLoss.create(this.settings.stopLoss, currentPrice)
   }
 
-  // Check if our stoploss has been triggered.
-  if (this.stopLoss.triggered(currentPrice)) {
+  // Do our sell conditions match current market conditions?
+  if(isMatch(this.market, this.condition.sell)) {
+    console.log("Going Short");
     this.advice('short');
     this.stopLoss.reset();
-    console.log("STOP LOSS ACTIVATED");
+  }
+  
+  // Check if our stoploss has been triggered.
+  if (this.stopLoss.triggered(currentPrice)) {
+    this.advice('short')
+    this.stopLoss.reset();
 
   } else if (this.stopLoss.active) {
     this.stopLoss.update(currentPrice);
   }
-}
-
-strat.end = function() {
-  // your code!
 }
 
 module.exports = strat;
