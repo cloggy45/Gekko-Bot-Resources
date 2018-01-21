@@ -143,7 +143,6 @@ method.handleposition  = function(candle){
     // Check if our stoploss has been triggered.
     if (stoploss.triggered(candle.close)) {
       hasbought = false;
-      log.debug("calling stop loss");
       stoploss.reset();
       return 'short';
   
@@ -196,7 +195,6 @@ method.check = function() {
             predictioncount++;
             var x = new convnetjs.Vol([predictioncount,data]);
             var predicted_value = neural.net.forward(x);
-            log.debug("Predicted : ",predicted_value.w[0]);
             return predicted_value.w[0];
           }
           var predictedvariationmean = median(predictedarray)
@@ -206,7 +204,7 @@ method.check = function() {
 
           if(haspredicted & predictioncount > 1000)
           {
-            prediction = predict(this.candle.close)
+            prediction = predict(this.candle.close);
             mean = Price[Price.length -1];
             oldmean = prediction;
             meanp = math.mean(prediction, mean);
@@ -232,11 +230,11 @@ method.check = function() {
 
 
                 global.sig0 = global.meanp < global.mean && meanp != 0
-                if (global.sig0 === false  && percentvar > 0.5 && this.stochD > this.stochK
-                    && this.stochD < 20)
+                if (global.sig0 === false  && percentvar > 0.5 
+                    && prediction < predictedvariationmean)
                    {
 
-                          log.debug("IA - Buy - Predicted variation: ",percentvar);
+                          // log.debug("IA - Buy - Predicted variation: ",percentvar);
                           hasbought = true;
                           meanp = 0
                           mean = 0;
@@ -251,12 +249,11 @@ method.check = function() {
                           return this.advice('long');
                    }
                 else if
-                (global.sig0 === true && percentvar < -0.5 && this.stochD < this.stochK
-                && this.stochD > 60
+                (global.sig0 === true && percentvar < -0.5 && prediction < predictedvariationmean
                 ) 
                 {
 
-                      log.debug("IA - Sell - Predicted variation: ",percentvar);
+                      // log.debug("IA - Sell - Predicted variation: ",percentvar);
                       meanp = 0
                       mean = 0;
                       hasbought = false;
