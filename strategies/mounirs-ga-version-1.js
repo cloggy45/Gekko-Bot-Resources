@@ -2,7 +2,7 @@
 // npm install convnetjs  zero-fill  stats-lite numbro mathjs  cluster
 var convnetjs = require('convnetjs')
 var z = require('zero-fill')
-var stats = require('stats-lite')g
+var stats = require('stats-lite')
 var n = require('numbro')
 var math = require('mathjs')
 const cluster = require('cluster');
