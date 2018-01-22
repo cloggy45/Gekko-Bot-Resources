@@ -187,7 +187,7 @@ method.check = function() {
 
     }
 
-    this.stochK = this.tulipIndicators.stoch.result.sotchK;
+    this.stochK = this.tulipIndicators.stoch.result.stochK;
     this.stochD = this.tulipIndicators.stoch.result.stochD; 
 
           //Learn
