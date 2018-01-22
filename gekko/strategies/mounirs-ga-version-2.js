@@ -1,80 +1,43 @@
 var convnetjs = require('convnetjs')
-var z = require('zero-fill')
-var stats = require('stats-lite')
-var n = require('numbro')
 var math = require('mathjs')
-const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 var _ = require('lodash');
 var helper = require('../helper.js')
-
-const deepqlearn = require('convnetjs/build/deepqlearn');
-
 var log = require('../core/log.js');
-// the below line starts you at 0 threads
-global.forks = 0
 // the below line is for calculating the last mean vs the now mean.
 var oldmean = 0
-getOption = function () {
 
-  }
-
-
-
-  
 // let's create our own method
 var method = {};
-options = "Options Set";
-options.activation_1_type = "regression";
-options.neurons_1 = 15;
-options.depth = 1;
-options.min_periods = 1000;
-options.min_predict = 1;
-options.momentum =0.2;
-options.decay = 0.1;
-options.threads = 4;
-options.learns = 2;
-
+this.activation_1_type = "regression";
+this.neurons_1 = 15;
+this.depth = 1;
+this.momentum =0.2;
+this.decay = 0.1;
 
 var hasbought = false;
-var stochParams = {
-    optInFastKPeriod: 8,
-    optInSlowKPeriod: 3,
-    optInSlowDPeriod: 3
-  };
 
 stoploss = helper.trailingStopLoss();
-
 neural = undefined;
 // prepare everything our method needs
 method.init = function() {
-    this.requiredHistory = this.tradingAdvisor.historySize;
-    this.addTulipIndicator('stoch', 'stoch', stochParams);
-  
+ 
     if (neural === undefined) {
         // Create the net the first time it is needed and NOT on every run
         neural = {
           net : new convnetjs.Net(),
           layer_defs : [
-            {type:'input', out_sx:1, out_sy:1, out_depth:options.depth},
-            {type:'fc', num_neurons:options.neurons_1, activation:options.activation_1_type},
-            {type:'fc', num_neurons:options.neurons_1, activation:options.activation_1_type},
+            {type:'input', out_sx:1, out_sy:1, out_depth:this.depth},
+            {type:'fc', num_neurons:this.neurons_1, activation:this.activation_1_type},
+            {type:'fc', num_neurons:this.neurons_1, activation:this.activation_1_type},
             {type:'regression', num_neurons:35}
           ],
           neuralDepth: 4
       }
         neural.net.makeLayers(neural.layer_defs);
-        neural.trainer = new convnetjs.SGDTrainer(neural.net, {learning_rate:0.05, momentum:options.momentum, batch_size:30, l2_decay:options.decay});
+        neural.trainer = new convnetjs.SGDTrainer(neural.net, {learning_rate:0.05, momentum:this.momentum, batch_size:30, l2_decay:this.decay});
       }
-
-      
-
-
-
-
 }
-
-
 
 var haspredicted = false;
 var predictioncount = 1;
@@ -87,8 +50,7 @@ var predictedarray = []
 // what happens on every new candle?
 method.update = function(candle) {
     Price.push(candle.close);
-    if(Price.length > 2)
-    {
+    if(Price.length > 2){
           
           var my_data = Price;
           var learn = function () {
@@ -98,29 +60,20 @@ method.update = function(candle) {
                 var x = new convnetjs.Vol([predictioncount,data]);
                 neural.trainer.train(x, real_value);
                 var predicted_values =neural.net.forward(x);
-                
-
-
-
                 var real_direction = data - real_value >= 0;
                 var pred_direction = predicted_values.w[0] - real_value >= 0;
                 var accuracy = predicted_values.w[0] -real_value
                 var accuracymatch = real_direction == pred_direction;
                 var rewardtheybitches = neural.net.backward(accuracymatch);
                 predictedarray.push(predicted_values.w[0]);
-                  if(accuracy > 0)
-                  {
+                if(accuracy > 0){
                     if(accuracy > maxaccuracy) {maxaccuracy = accuracy} 
-                  }
-                  if(accuracy <0)
-                  {
+                }
+                if(accuracy <0){
                     if(accuracy < lowaccuracy) {lowaccuracy = accuracy} 
-  
-                  }
-                  
+                }                  
                   predictioncount++;
                   haspredicted = true;
-
               }
             }
             learn();
@@ -128,14 +81,8 @@ method.update = function(candle) {
             // var json = neural.net.toJSON();
             // // the entire object is now simply string. You can save this somewhere
             // var str = JSON.stringify(json);
-            // log.debug(str);    
-        
+            // log.debug(str);           
     }
-}
-
-
-method.log = function() {
-
 }
 
 method.handleposition  = function(candle){
@@ -176,20 +123,12 @@ function median(values) {
       return (values[half-1] + values[half]) / 2.0;
 }
 
-
 method.check = function() {
-    if(hasbought)
-    {
-      if(method.handleposition(this.candle) == 'short')
-      {
+    if(hasbought){
+      if(method.handleposition(this.candle) == 'short') {
         return this.advice('short');
       }
-
     }
-
-    this.stochK = this.tulipIndicators.stoch.result.stochK;
-    this.stochD = this.tulipIndicators.stoch.result.stochD; 
-
           //Learn
           var predict = function(data) {
             predictioncount++;
@@ -201,9 +140,7 @@ method.check = function() {
         
           this.HCL = (this.candle.high + this.candle.close + this.candle.open) /3;
      
-
-          if(haspredicted & predictioncount > 1000)
-          {
+          if(haspredicted & predictioncount > 1000) {
             prediction = predict(this.candle.close);
             mean = Price[Price.length -1];
             oldmean = prediction;
@@ -216,10 +153,7 @@ method.check = function() {
               
               prediction += lowaccuracy;
               percentvar += lowaccuracy;
-              if(lowpeak > percentvar) { lowpeak = percentvar;}
-
-
-            
+              if(lowpeak > percentvar) { lowpeak = percentvar;}           
             }
             if(percentvar > 0) { 
               
@@ -228,11 +162,8 @@ method.check = function() {
               if(highpeak < percentvar) { highpeak = percentvar;}
             }
 
-
                 global.sig0 = global.meanp < global.mean && meanp != 0
-                if (global.sig0 === false  && percentvar > 0.5 
-                    && prediction < predictedvariationmean)
-                   {
+                if (global.sig0 === false  && percentvar > 0.5  && prediction < predictedvariationmean){
 
                           // log.debug("IA - Buy - Predicted variation: ",percentvar);
                           hasbought = true;
@@ -240,18 +171,14 @@ method.check = function() {
                           mean = 0;
                           haspredicted = false;
                           ManageSize();
-                          if(stoploss != undefined)
-                          {
+                          if(stoploss != undefined){
                             stoploss.reset();
-
                           }
                           stoploss.create(0.90, this.candle.close);
                           return this.advice('long');
-                   }
+                }
                 else if
-                (global.sig0 === true && percentvar < -0.5 && prediction < predictedvariationmean
-                ) 
-                {
+                (global.sig0 === true && percentvar < -0.5 && prediction < predictedvariationmean){
 
                       // log.debug("IA - Sell - Predicted variation: ",percentvar);
                       meanp = 0
@@ -259,16 +186,9 @@ method.check = function() {
                       hasbought = false;
                       haspredicted = false;
                       stoploss.reset();
-                      return this.advice('short');
-
-
-                   
-                }    
-  
+                      return this.advice('short');   
+                }      
           }
-
-
-
 }
 
 module.exports = method;
