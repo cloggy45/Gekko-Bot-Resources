@@ -55,13 +55,18 @@ method.update = function(candle) {
           var my_data = Price;
           var learn = function () {
               for (var i = 0; i < Price.length - 1; i++) {
+
+                //Iterate through value T-1 and value t-0(real to reward neurones)
                 var data = my_data.slice(i, i + 1);
                 var real_value = [my_data[i + 1]];
                 var x = new convnetjs.Vol([predictioncount,data]);
                 neural.trainer.train(x, real_value);
                 var predicted_values =neural.net.forward(x);
+
+                //For futur 
                 var real_direction = data - real_value >= 0;
                 var pred_direction = predicted_values.w[0] - real_value >= 0;
+
                 var accuracy = predicted_values.w[0] -real_value
                 var accuracymatch = real_direction == pred_direction;
                 var rewardtheybitches = neural.net.backward(accuracymatch);
