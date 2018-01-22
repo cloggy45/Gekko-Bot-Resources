@@ -78,11 +78,18 @@ method.update = function(candle) {
             }
             learn();
 
-            // var json = neural.net.toJSON();
-            // // the entire object is now simply string. You can save this somewhere
-            // var str = JSON.stringify(json);
-            // log.debug(str);           
     }
+}
+
+
+// Code for exporting the network
+ExportTraing = function(){
+
+            var json = neural.net.toJSON();
+            // the entire object is now simply string. You can save this somewhere
+            var str = JSON.stringify(json);
+            log.debug(str);           
+
 }
 
 method.handleposition  = function(candle){
