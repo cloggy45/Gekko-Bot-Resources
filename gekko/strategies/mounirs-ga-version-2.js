@@ -175,7 +175,7 @@ method.check = function() {
             }
 
                 global.sig0 = global.meanp < global.mean && meanp != 0
-                if (global.sig0 === false  && percentvar > 0.5  && prediction < predictedvariationmean){
+                if (global.sig0 === false  && percentvar> 1.70 )
 
                           // log.debug("IA - Buy - Predicted variation: ",percentvar);
                           hasbought = true;
@@ -190,7 +190,7 @@ method.check = function() {
                           return this.advice('long');
                 }
                 else if
-                (global.sig0 === true && percentvar < -0.5 && prediction < predictedvariationmean){
+                (global.sig0 === true && percentvar < -0.90)
 
                       // log.debug("IA - Sell - Predicted variation: ",percentvar);
                       meanp = 0
