@@ -2,22 +2,33 @@ var helper = require('../helper.js');
 var isMatch = require('lodash.ismatch');
 var log = require('../core/log.js');
 
+//npm install lodash.ismatch
 
 var strat = {};
 
+
 strat.results = {
-    stoch: null,
-    adx: null
+    stoch: {
+        condition : null
+    },
+    movingAverage : null
 };
 
-strat.states = {
-    indicators: {}
+
+strat.market = {
+    stoch : {
+        condition : null
+    }
 };
 
 strat.init = function () {
+
     this.stopLoss = helper.trailingStopLoss();
+
+    this.candleHistory = helper.candleHistory();
+    this.candleHistory.init(10);
+
     this.addTulipIndicator('myStoch', 'stoch', this.settings.myStoch);
-    this.addTulipIndicator('myAdx', 'adx', this.settings.myAdx);
 
     this.trend = {
         condition: 'none',
@@ -29,24 +40,35 @@ strat.init = function () {
 
 };
 
+function getAverage(total, numElements) {
+    return total / numElements;
+}
+
+
 strat.update = function (candle) {
+
+    this.candleHistory.add(candle);
+
+    // Get the total, of the closing prices from set.
+    if(this.candleHistory.full()) {
+        var total = this.candleHistory.get().reduce(function(accu, candle) {
+            return accu + candle.close
+        },0);
+    }
+
+    this.results.movingAverage = getAverage(total, this.candleHistory.size());
     this.results.stoch = this.tulipIndicators.myStoch.result;
-    this.results.adx = this.tulipIndicators.myAdx.result;
-
-    var currentStochCondition = helper.getStochCondition(this.results.stoch.stochK, this.results.stoch.stochD, this.settings.myStoch.lowThreshold, this.settings.myStoch.highThreshold);
-    var currentAdxStrength = helper.printAdxStrength(this.results.adx.result);
-
-    log.debug(currentAdxStrength);
-    this.market.stoch.condition = currentStochCondition;
-};
-
-strat.log = function () {
-    // your code!
+    this.market.stoch.condition = helper.getStochCondition(this.results.stoch.stochK, this.results.stoch.stochD, this.settings.myStoch.lowThreshold, this.settings.myStoch.highThreshold);
 };
 
 strat.check = function (candle) {
+
     var currentPrice = candle.close;
 
+    if(this.stopLoss.triggered()) {
+        this.advice('short');
+        this.advised = false
+    }
 
     if (this.market.stoch.condition === 'oversold') {
         if (this.trend.condition !== 'oversold')
@@ -66,7 +88,9 @@ strat.check = function (candle) {
         if (this.trend.persisted && !this.trend.advised) {
             this.trend.advised = true;
             this.advice('long');
-            this.stopLoss.create(this.settings.stopLoss.percent, currentPrice)
+            this.stopLoss.create(this.results.movingAverage, currentPrice);
+            this.stopLoss.print();
+
         } else
             this.advice();
 
@@ -89,23 +113,19 @@ strat.check = function (candle) {
 
         if (this.trend.persisted && !this.trend.advised) {
             this.trend.advised = true;
-            log.debug('PLACING A SHORT ORDER');
+
             this.advice('short');
             this.stopLoss.reset();
+
         } else
             this.advice();
 
-    } else if (this.stopLoss.triggered(currentPrice)) {
-        this.advice('short');
-        this.stopLoss.reset();
-    }
-    else {
-        if (this.stopLoss.active)
-            this.stopLoss.update(currentPrice);
-
+    } else {
         this.trend.duration = 0;
         this.advice();
     }
 };
+
+
 
 module.exports = strat;
