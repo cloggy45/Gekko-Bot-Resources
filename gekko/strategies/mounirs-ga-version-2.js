@@ -66,7 +66,6 @@ neural = undefined;
 method.init = function() {
     this.requiredHistory = this.tradingAdvisor.historySize;
 
-    this.addTulipIndicator('stoch', 'stoch', stochParams);
 
     if (neural === undefined) {
         // Create the net the first time it is needed and NOT on every run
@@ -167,9 +166,7 @@ ManageSize = function(){
 }
 method.check = function() {
 
-    this.stochK = this.tulipIndicators.stoch.result.sotchK;
-    this.stochD = this.tulipIndicators.stoch.result.stochD;
-
+sto
           //Learn
           var predict = function(data) {
             var x = new convnetjs.Vol(data);
