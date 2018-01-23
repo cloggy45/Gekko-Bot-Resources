@@ -6,6 +6,7 @@ var math = require('mathjs')
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 var _ = require('lodash');
+var gauss = require('gauss');
 
 const deepqlearn = require('convnetjs/build/deepqlearn');
 
@@ -60,6 +61,7 @@ var stochParams = {
     optInSlowDPeriod: 3
   };
 
+var VarList = new gauss.Collection();
 
 neural = undefined;
 // prepare everything our method needs
@@ -81,6 +83,12 @@ method.init = function() {
         neural.net.makeLayers(neural.layer_defs);
         neural.trainer = new convnetjs.SGDTrainer(neural.net, {learning_rate:0.05, momentum:options.momentum, batch_size:10, l2_decay:options.decay});
       }
+
+
+
+
+
+
 }
 
 
@@ -121,7 +129,6 @@ method.update = function(candle) {
                   if(accuracy < lowaccuracy) {lowaccuracy = accuracy}
 
                 }
-
                 predictioncount++;
                 haspredicted = true;
 
@@ -147,12 +154,12 @@ method.handleposition  = function(){
 }
 
 var Price = [];
+function per(num, amount){
+    return num*amount/100;
+    }
 
 ManageSize = function(){
 
-      function per(num, amount){
-      return num*amount/100;
-      }
 
       var calculatedpercent = per(Price.length,5);
       Price.splice(0,calculatedpercent);
@@ -170,7 +177,7 @@ method.check = function() {
           this.HCL = (this.candle.high + this.candle.close + this.candle.open) /3;
 
 
-          if(haspredicted && predictioncount > 1000)
+          if(haspredicted & predictioncount > 1000)
           {
             var item = Price;
             prediction = predict(item)
@@ -180,6 +187,7 @@ method.check = function() {
             global.meanp = meanp
             global.mean = mean
             var percentvar = (meanp-mean)/mean * 100;
+            VarList.push(percentvar);
 
             if(percentvar < 0) {
 
@@ -197,29 +205,38 @@ method.check = function() {
               if(highpeak < percentvar) { highpeak = percentvar;}
             }
 
+            var VectorVar = VarList.toVector();
+            var Variance =( VectorVar.variance());
+            var Density30 = VectorVar.density(30);
 
 
-            log.debug("IA - Buy - Predicted variation: ",percentvar);
+                var top = per(Density30[Density30.length -1],-30);
+                var low =  per(Density30[0],10);
+
 
 
                 global.sig0 = global.meanp < global.mean && meanp != 0
-                if (global.sig0 === false  && percentvar> 1.70 )
+                if (global.sig0 === false  && percentvar > low)
                    {
 
                           log.debug("IA - Buy - Predicted variation: ",percentvar);
+                          log.debug("Variance :",Variance);
+                          log.debug("Density 30: low  ",low);
                           hasbought = true;
-                          meanp = 0
+                          meanp = 0;
                           mean = 0;
                           haspredicted = false;
                           ManageSize();
                           return this.advice('long');
                    }
                 else if
-                (global.sig0 === true && percentvar < -0.90)
+                (global.sig0 === true && percentvar < top)
                 {
 
-                      log.debug("IA - Sell - Predicted variation: ",percentvar);
-                      meanp = 0
+                    //   log.debug("IA - Sell - Predicted variation: ",percentvar);
+                    //   log.debug("Density 30 high : ",top);
+                    //   log.debug("Variance :",Variance);
+                      meanp = 0;
                       mean = 0;
                       hasbought = false;
                       haspredicted = false;
