@@ -176,7 +176,7 @@ method.check = function() {
           this.HCL = (this.candle.high + this.candle.close + this.candle.open) /3;
 
 
-          if(haspredicted & predictioncount > 1000)
+          if(haspredicted && predictioncount > 1000)
           {
             var item = Price;
             prediction = predict(item)
@@ -202,6 +202,9 @@ method.check = function() {
               percentvar -= maxaccuracy;
               if(highpeak < percentvar) { highpeak = percentvar;}
             }
+
+
+
             log.debug("IA - Buy - Predicted variation: ",percentvar);
 
 
