@@ -166,7 +166,6 @@ ManageSize = function(){
 }
 method.check = function() {
 
-sto
           //Learn
           var predict = function(data) {
             var x = new convnetjs.Vol(data);
