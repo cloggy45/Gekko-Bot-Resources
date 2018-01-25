@@ -58,22 +58,17 @@ exports.getStochCondition = function getCurrentCondition(stochk, stochd, lowThre
         return 'middle';
 };
 
-exports.getTrend = function getCurrentTrendDirection(ema, price) {
-    if (ema > price)
-        return 'uptrend';
-    else if (ema < price)
-        return 'downtrend';
-    else
-        return 'no trend'
-};
+
+exports.dislay = function indicatorResults () {
+    var emaTrend = function (currentEma, currentPrice) {
+        return (currentEma > price) ? 'uptrend' : 'downtrend';
+    }
+}
+
+
 
 exports.crossover = function hasCrossedOver(shortEma, longEma) {
-    if (shortEma > longEma)
-        return 'short crossover'
-    else if (longEma > shortEma)
-        return 'long crossover'
-    else
-        return 'no crossover'
+    return (short > longEma) ? 'short' : 'long';
 };
 
 /**
@@ -102,7 +97,7 @@ exports.candleHistory = function () {
     };
 
     var isFull = function () {
-        return (_candles.length >_limit);
+        return (_candles.length > _limit);
     };
 
     var getCurrentCandles = function () {
