@@ -49,27 +49,27 @@ exports.trailingStopLoss = function () {
     }
 };
 
-exports.getStochCondition = function getCurrentCondition(stochk, stochd, lowThreshold, highThreshold) {
-    if (stochk > highThreshold && stochd > highThreshold)
+
+exports.display = function () {
+    var emaTrend = function (currentEma, currentPrice) {
+        return (currentEma > currentPrice) ? 'uptrend' : 'downtrend';
+    }
+    
+    var stochCondition = function (stochk, stochd, lowThreshold, highThreshold) {
+        if (stochk > highThreshold && stochd > highThreshold)
         return 'overbought';
     else if (stochk < lowThreshold && stochd < lowThreshold)
         return 'oversold';
     else
         return 'middle';
-};
-
-
-exports.dislay = function indicatorResults () {
-    var emaTrend = function (currentEma, currentPrice) {
-        return (currentEma > price) ? 'uptrend' : 'downtrend';
+    }
+    
+    return {
+        ema : emaTrend,
+        stoch : stochCondition,
+        
     }
 }
-
-
-
-exports.crossover = function hasCrossedOver(shortEma, longEma) {
-    return (short > longEma) ? 'short' : 'long';
-};
 
 /**
  * We use this module to keep track of candle history.
