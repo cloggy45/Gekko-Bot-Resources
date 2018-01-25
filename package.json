@@ -1,0 +1,27 @@
+{
+  "name": "Gekko_Trading_Resources",
+  "version": "1.0.0",
+  "description": "```\r $ git clone https://github.com/cloggy45/Gekko_Trading_Resources.git\r $ cp Gekko_Trading_Resources/gekko/* gekko -R\r $ cd gekko\r $ npm install convnetjs zero-fill stats-lite numbro mathjs cluster\r ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "scripts": {
+  "test": "mocha lib/**/**.spec.js"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloggy45/Gekko_Trading_Resources.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cloggy45/Gekko_Trading_Resources/issues"
+  },
+  "homepage": "https://github.com/cloggy45/Gekko_Trading_Resources#readme",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.0.0"
+  }
+}
