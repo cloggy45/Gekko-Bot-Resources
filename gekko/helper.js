@@ -1,93 +1,95 @@
-exports.trailingStopLoss = function () {
+exports.trailingStopLoss = function() {
 
-    //WARNING THIS IS NOT FINISHED
+    //Percentage based trailing stop loss, 
+    
+    let _percentage = null;
+    let _prevPrice = null;
+    let _stopLoss = null;
+    let _isActive = false;
 
-    var _stopLoss = null;
-    var _buyPrice = null;
-    var _movingAverage = null;
-    var _active = false;
-
-    var init_values = function (movingAverage, buyPrice) {
-        _movingAverage = movingAverage;
-        _buyPrice = buyPrice;
-        _active = true;
-        _stopLoss = movingAverage;
+    function initSettings(percentage, currentPrice) {
+        _percentage = percentage;
+        _prevPrice = currentPrice;
+        _stopLoss = calculateStopLoss(currentPrice);
+        _isActive = true;
     };
 
-    var update_our_stoploss = function (currentMovingAverage) {
-        _stopLoss = currentMovingAverage;
+    function isTriggered(currentPrice) {
+        return (_stopLoss > currentPrice);
+    }
+
+    function calculateStopLoss(currentPrice) {
+        return (((100 - _percentage)) / 100) * currentPrice;
     };
 
-    var calculate = function (currentPrice, currentMovingAverage) {
-        if(_active) {
-            if (currentPrice < currentMovingAverage )
-                return 'Current price is below';
-            else
-                update_our_stoploss(currentMovingAverage)
-        }
+    function resetSettings() {
+        _percentage, _prevPrice, _percentage, _stopLoss = null;
+        _isActive = false;
     };
+    
+    function checkActiveState () {
+        return (_isActive)
+    }
 
-    var reset_settings = function () {
-        _stopLoss = null;
-        _buyPrice = null;
-        _movingAverage = null;
-        _active = false;
-    };
-
-    var log_values = function () {
-        console.log("Buy Price: " + _buyPrice);
-        console.log("Moving Average " + _movingAverage);
-        console.log("Stop Loss " + _stopLoss);
+    function printVariables() {
+        console.log(`
+        -----------------------------
+        Percent: ${_percentage}
+        Previous Price: ${_prevPrice}
+        Stop Loss: ${_stopLoss}
+        State: ${_isActive}
+        ----------------------------;
+        `)
     };
 
     return {
-        create: init_values,
-        reset: reset_settings,
-        update: update_our_stoploss,
-        triggered: calculate,
-        print: log_values
+        create: initSettings,
+        reset: resetSettings,
+        update: calculateStopLoss,
+        log : printVariables,
+        triggered : isTriggered,
+        active : checkActiveState
     }
 };
 
 
-exports.display = function () {
-    var emaTrend = function (currentEma, currentPrice) {
+exports.display = function() {
+    var emaTrend = function(currentEma, currentPrice) {
         return (currentEma > currentPrice) ? 'uptrend' : 'downtrend';
     }
-    
-    var stochCondition = function (stochk, stochd, lowThreshold, highThreshold) {
+
+    var stochCondition = function(stochk, stochd, lowThreshold, highThreshold) {
         if (stochk > highThreshold && stochd > highThreshold)
-        return 'overbought';
-    else if (stochk < lowThreshold && stochd < lowThreshold)
-        return 'oversold';
-    else
-        return 'middle';
+            return 'overbought';
+        else if (stochk < lowThreshold && stochd < lowThreshold)
+            return 'oversold';
+        else
+            return 'middle';
     }
-    
+
     return {
-        ema : emaTrend,
-        stoch : stochCondition,
-        
+        ema: emaTrend,
+        stoch: stochCondition,
     }
 }
 
 /**
  * We use this module to keep track of candle history.
  */
-exports.candleHistory = function () {
+exports.candleHistory = function() {
     var _limit = null;
     var _candles = [];
 
 
-    var initialise = function (limit) {
+    var initialise = function(limit) {
         _limit = limit - 1;
     };
 
-    var _canAdd = function () {
+    var _canAdd = function() {
         return (_candles.length <= _limit);
     };
 
-    var addCandleToarray = function (candle) {
+    var addCandleToarray = function(candle) {
         if (_canAdd())
             _candles.push(candle);
         else {
@@ -96,15 +98,15 @@ exports.candleHistory = function () {
         }
     };
 
-    var isFull = function () {
+    var isFull = function() {
         return (_candles.length > _limit);
     };
 
-    var getCurrentCandles = function () {
+    var getCurrentCandles = function() {
         return _candles;
     };
 
-    var getCurrentSize = function () {
+    var getCurrentSize = function() {
         return _candles.length;
     };
 
@@ -112,8 +114,8 @@ exports.candleHistory = function () {
         init: initialise,
         add: addCandleToarray,
         get: getCurrentCandles,
-        full : isFull,
-        size : getCurrentSize
+        full: isFull,
+        size: getCurrentSize
     }
 };
 

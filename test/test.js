@@ -15,3 +15,10 @@ describe('Display Strings', function() {
     });
   });
 });
+
+describe('Trailing Stop Loss', function() {
+  var TrailingStopLoss = Helper.trailingStopLoss()
+  
+  
+  
+}})
