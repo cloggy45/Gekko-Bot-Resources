@@ -1,6 +1,4 @@
 exports.trailingStopLoss = function() {
-
-    //Percentage based trailing stop loss, 
     
     let _percentage = null;
     let _prevPrice = null;
