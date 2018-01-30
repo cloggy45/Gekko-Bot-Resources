@@ -1,19 +1,3 @@
-class PercentageTrailingStopLoss {
-    constructor(percentage, currentPrice) {
-        this._percentage = percentage;
-        this._prevPrice = currentPrice;
-        this._isActive = false;
-        this._stopLoss = 
-    }
-    
-    _calculateStopLoss(currentPrice) {
-        return (((100 - _percentage)) / 100) * currentPrice;
-    } 
-    
-}
-
-export.percentage = new PercentageBased
-
 exports.trailingStopLoss = function() {
     
     let _percentage = null;
@@ -57,8 +41,8 @@ exports.trailingStopLoss = function() {
     };
 
     return {
-        create: initSettings,
-        reset: resetSettings,
+        activate: initSettings,
+        deactivate: resetSettings,
         update: calculateStopLoss,
         log : printVariables,
         triggered : isTriggered,
