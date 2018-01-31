@@ -22,7 +22,7 @@ You need to add the ```helper.js``` file to the root of your Gekko folder, then 
 
 >"A trailing stop order sets the stop price at a fixed amount below the market price with an attached "trailing" amount. As the market price rises, the stop price rises by the trail amount, but if the stock price falls, the stop loss price doesn't change, and a market order is submitted when the stop price is hit."
 
-## Instructions
+#### Instructions
 
 We initialize our trailing stop loss in our init function in our strategy like so:
 ```javascript
