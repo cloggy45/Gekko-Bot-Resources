@@ -7,8 +7,7 @@ var strat = {};
 strat.results = {
     stoch: {
         condition: null
-    },
-    movingAverage: null
+    }
 };
 
 strat.market = {
@@ -20,7 +19,8 @@ strat.market = {
 strat.init = function() {
 
     this.stopLoss = helper.trailingStopLoss();
-
+    this.stopLoss.percentage = this.settings.trailingStop.percentage;
+    
     this.display = helper.display();
 
     this.addTulipIndicator('myStoch', 'stoch', this.settings.myStoch);
@@ -45,11 +45,9 @@ strat.check = function(candle) {
 
     if(this.stopLoss.active()) {
         if (this.stopLoss.triggered(currentPrice) ) {
-            console.log("Shorting position");
-            this.stopLoss.log();
             this.advice('short');
             this.advised = false
-            this.stopLoss.deactivate();
+            this.stopLoss.destroy();
         } else {
             this.stopLoss.update(currentPrice);
         }
@@ -67,15 +65,15 @@ strat.check = function(candle) {
         this.trend.duration++;
 
         // TODO change hardcoded value
-        if (this.trend.duration >= 2)
+        if (this.trend.duration >= this.settings.trendDuration)
             this.trend.persisted = true;
 
         if (this.trend.persisted && !this.trend.advised) {
-            console.log("Going long");
+
             this.trend.advised = true;
             this.advice('long');
-            this.stopLoss.activate(30, currentPrice);
-            this.stopLoss.log();
+            this.stopLoss.create(this.stopLoss.percentage, currentPrice);
+
         }
         else
             this.advice();
@@ -94,15 +92,13 @@ strat.check = function(candle) {
         this.trend.duration++;
 
         // TODO change hardcoded value
-        if (this.trend.duration >= 1)
+        if (this.trend.duration >= this.settings.trendDuration)
             this.trend.persisted = true;
 
         if (this.trend.persisted && !this.trend.advised) {
-            console.log("Shorting our position")
-            this.stopLoss.log();
             this.trend.advised = true;
             this.advice('short');
-            this.stopLoss.deactivate();
+            this.stopLoss.destroy();
         }
         else
             this.advice();

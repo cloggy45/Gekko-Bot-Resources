@@ -78,7 +78,6 @@ exports.candleHistory = function() {
     var _limit = null;
     var _candles = [];
 
-
     var initialise = function(limit) {
         _limit = limit - 1;
     };
