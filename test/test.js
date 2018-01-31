@@ -14,20 +14,21 @@ describe('Display Strings Module', () => {
   });
 });
 
+
 describe('Percentage Based Trailing Stoploss Module', () => {
   let trailingStopLoss = Helper.trailingStopLoss();
-  
+
   describe('isTriggered', () => {
     it('Should return true when stoploss is greater than current price', () => {
-      trailingStopLoss.activate(10, 5000);
+      trailingStopLoss.create(10, 5000);
       assert.equal(trailingStopLoss.triggered(100), true);
     });
     it('Should return false when stoploss is equal to the current price', () => {
-      trailingStopLoss.activate(10, 100);
+      trailingStopLoss.create(10, 100);
       assert.equal(trailingStopLoss.triggered(90), false);
     });
     it('Should return false when stoploss is less than current price', () => {
-      trailingStopLoss.activate(10, 100);
+      trailingStopLoss.create(10, 100);
       assert.equal(trailingStopLoss.triggered(1000), false);
     });
   });

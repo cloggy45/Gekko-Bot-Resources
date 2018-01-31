@@ -32,7 +32,6 @@ strat.init = function() {
         persisted: false,
         adviced: false
     };
-
 };
 
 strat.update = function(candle) {
@@ -45,12 +44,12 @@ strat.check = function(candle) {
     var currentPrice = candle.close;
 
     if(this.stopLoss.active()) {
-        this.stopLoss.log();
         if (this.stopLoss.triggered(currentPrice) ) {
+            console.log("Shorting position");
+            this.stopLoss.log();
             this.advice('short');
             this.advised = false
-            this.stopLoss.reset();
-            
+            this.stopLoss.deactivate();
         } else {
             this.stopLoss.update(currentPrice);
         }
@@ -72,10 +71,11 @@ strat.check = function(candle) {
             this.trend.persisted = true;
 
         if (this.trend.persisted && !this.trend.advised) {
+            console.log("Going long");
             this.trend.advised = true;
-            
             this.advice('long');
-            this.stopLoss.create(1, currentPrice);
+            this.stopLoss.activate(30, currentPrice);
+            this.stopLoss.log();
         }
         else
             this.advice();
@@ -85,7 +85,7 @@ strat.check = function(candle) {
 
         if (this.trend.condition !== 'overbought')
             this.trend = {
-                duration: 0,
+                duration: 0, 
                 persisted: false,
                 condition: 'overbought',
                 advised: false
@@ -98,9 +98,11 @@ strat.check = function(candle) {
             this.trend.persisted = true;
 
         if (this.trend.persisted && !this.trend.advised) {
+            console.log("Shorting our position")
+            this.stopLoss.log();
             this.trend.advised = true;
             this.advice('short');
-            this.stopLoss.reset();
+            this.stopLoss.deactivate();
         }
         else
             this.advice();

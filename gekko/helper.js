@@ -41,8 +41,8 @@ exports.trailingStopLoss = function() {
     };
 
     return {
-        activate: initSettings,
-        deactivate: resetSettings,
+        create: initSettings,
+        destroy: resetSettings,
         update: calculateStopLoss,
         log : printVariables,
         triggered : isTriggered,
