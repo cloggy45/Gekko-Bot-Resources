@@ -6,7 +6,7 @@
 $ git clone https://github.com/cloggy45/Gekko-Bot-Resources.git
 $ cp Gekko-Bot-Resources/gekko/* gekko -R
 $ cd gekko
-$ npm install convnetjs zero-fill stats-lite numbro mathjs cluster lodash.ismatch 
+$ npm install convnetjs zero-fill stats-lite numbro mathjs cluster lodash.ismatch gauss 
 ```
 
 # helper.js Guide
