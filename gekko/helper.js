@@ -6,18 +6,19 @@ exports.trailingStopLoss = function() {
     let _isActive = false;
 
     function initSettings(percentage, currentPrice) {
-        _percentage = percentage;
+        _percentage = (((100 - percentage)) / 100);
         _prevPrice = currentPrice;
         _stopLoss = calculateStopLoss(currentPrice);
         _isActive = true;
     };
 
     function isTriggered(currentPrice) {
-        return (_stopLoss > currentPrice);
+        if(_isActive)
+            return (_stopLoss > currentPrice);
     }
 
     function calculateStopLoss(currentPrice) {
-        return (((100 - _percentage)) / 100) * currentPrice;
+        return _percentage * currentPrice;
     };
 
     function resetSettings() {
@@ -25,17 +26,13 @@ exports.trailingStopLoss = function() {
         _isActive = false;
     };
     
-    function checkActiveState () {
-        return (_isActive)
-    }
-
     function printVariables() {
         console.log(`
         -----------------------------
         Percent: ${_percentage}
         Previous Price: ${_prevPrice}
         Stop Loss: ${_stopLoss}
-        State: ${_isActive}
+        Active : ${_isActive}
         ----------------------------;
         `)
     };
@@ -45,32 +42,9 @@ exports.trailingStopLoss = function() {
         destroy: resetSettings,
         update: calculateStopLoss,
         log : printVariables,
-        triggered : isTriggered,
-        active : checkActiveState
+        isTriggered : isTriggered,
     }
 };
-
-
-exports.display = function() {
-    var emaTrend = function(currentEma, currentPrice) {
-        return (currentEma > currentPrice) ? 'uptrend' : 'downtrend';
-    }
-
-    var stochCondition = function(stochk, stochd, lowThreshold, highThreshold) {
-        if (stochk > highThreshold && stochd > highThreshold)
-            return 'overbought';
-        else if (stochk < lowThreshold && stochd < lowThreshold)
-            return 'oversold';
-        else
-            return 'middle';
-    }
-
-    return {
-        ema: emaTrend,
-        stoch: stochCondition,
-    }
-}
-
 /**
  * We use this module to keep track of candle history.
  */
@@ -114,8 +88,4 @@ exports.candleHistory = function() {
         full: isFull,
         size: getCurrentSize
     }
-};
-
-exports.trending = function isTrending(previousTrend, currentTrend) {
-    return (previousTrend === currentTrend);
 };

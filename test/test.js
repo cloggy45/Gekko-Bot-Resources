@@ -16,20 +16,26 @@ describe('Display Strings Module', () => {
 
 
 describe('Percentage Based Trailing Stoploss Module', () => {
-  let trailingStopLoss = Helper.trailingStopLoss();
-
+  let percentageTrailingStoploss = new TrailingStopLoss('Percentage');
+  
+  describe('Object Creation', ()=> {
+    it('Should return an instance of TrailingStopLoss', () => {
+      assert.equal(typeof trailingStopLoss, TrailingStopLoss);
+    });
+  })
+  
   describe('isTriggered', () => {
     it('Should return true when stoploss is greater than current price', () => {
-      trailingStopLoss.create(10, 5000);
-      assert.equal(trailingStopLoss.triggered(100), true);
+      percentageTrailingStoploss.create(10, 5000);
+      assert.equal(percentageTrailingStoploss.triggered(100), true);
     });
     it('Should return false when stoploss is equal to the current price', () => {
-      trailingStopLoss.create(10, 100);
-      assert.equal(trailingStopLoss.triggered(90), false);
+      percentageTrailingStoploss.create(10, 100);
+      assert.equal(percentageTrailingStoploss.triggered(90), false);
     });
     it('Should return false when stoploss is less than current price', () => {
-      trailingStopLoss.create(10, 100);
-      assert.equal(trailingStopLoss.triggered(1000), false);
+      percentageTrailingStoploss.create(10, 100);
+      assert.equal(percentageTrailingStoploss.triggered(1000), false);
     });
   });
 });
