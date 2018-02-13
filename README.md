@@ -11,7 +11,7 @@ $ npm install convnetjs zero-fill stats-lite numbro mathjs cluster lodash.ismatc
 
 # helper.js Guide
 
-The ```helper.js``` includes a collection of functions or modules that I find myself creating each time I make a strategy.
+The ```helper.js``` includes a collection of modules that I find myself creating each time I make a strategy.
 
 ## Installation
 
