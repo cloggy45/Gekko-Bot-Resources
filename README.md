@@ -43,15 +43,14 @@ this.stopLoss.destroy();
 ```
 We must also check on each candle to see if our trailing stop loss has triggered, we can do it like so: 
 ```javascript
- if(this.stopLoss.active()) {
-    if (this.stopLoss.triggered(currentPrice) ) {
-        this.advice('short');
-        this.advised = false
-        this.stopLoss.destroy();
-    } else {
-        this.stopLoss.update(currentPrice);
-    }
-}
+strat.check = function(candle) {
+	const currentPrice = candle.close;
+	if(this.stopLoss.isTriggered(currentPrice)) {
+		this.advice('short');
+	    this.stopLoss.destroy();
+	} else {
+	    this.stopLoss.update(currentPrice);
+	}
+	.....
 ```
 We would place the above code in our check function in our strategy.
-
