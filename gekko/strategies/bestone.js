@@ -95,7 +95,7 @@ method.check = function (candle) {
 
         log.info('In downtrend since', this.trend.duration, 'candle (s)');
 
-        if (this.trend.duration >= this.settings.persistance) {
+        if (this.trend.duration >= this.persistance) {
             this.trend.persisted = true;
         }
 
