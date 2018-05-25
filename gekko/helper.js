@@ -27,14 +27,11 @@ exports.trailingStopLoss = function() {
     };
     
     function printVariables() {
-        console.log(`
-        -----------------------------
-        Percent: ${_percentage}
-        Previous Price: ${_prevPrice}
-        Stop Loss: ${_stopLoss}
-        Active : ${_isActive}
-        ----------------------------;
-        `)
+        return {
+            percentage : _percentage,
+            stoploss : _stopLoss,
+            active : _isActive
+        }
     };
 
     return {
