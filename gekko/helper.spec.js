@@ -3,6 +3,7 @@ const Helper = require('../gekko/helper.js');
 describe('Helper', () => {
     describe('Trailing Stoploss', () => {
         let trailingStopLoss = null;
+
         beforeEach(() => {
             trailingStopLoss = Helper.trailingStopLoss();
             trailingStopLoss.create(10, 100);

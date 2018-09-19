@@ -4,16 +4,29 @@
   "description": "The helper.js includes a collection of modules that I find myself creating each time I make a Gekko strategy.",
   "main": "helper.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cloggy45/Gekko-Bot-Resources.git"
+  },
+  "dependencies": {
+    "convnetjs": "0.3.0",
+    "zero-fill": "2.2.3",
+    "stats-lite": "2.2.0",
+    "numbro": "2.1.0",
+    "mathjs": "5.1.2",
+    "cluster": "0.7.7",
+    "lodash.ismatch": "4.4.0",
+    "gauss": "0.2.12"
   },
   "author": "Paul Mcloughlin",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cloggy45/Gekko-Bot-Resources/issues"
   },
-  "homepage": "https://github.com/cloggy45/Gekko-Bot-Resources#readme"
+  "homepage": "https://github.com/cloggy45/Gekko-Bot-Resources#readme",
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
 }

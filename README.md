@@ -6,8 +6,7 @@
 $ git clone https://github.com/cloggy45/Gekko-Bot-Resources.git
 $ cp Gekko-Bot-Resources/gekko/* gekko -R
 $ cd gekko
-$ npm install convnetjs zero-fill stats-lite numbro mathjs cluster lodash.ismatch gauss 
-```
+$ npm install
 
 # helper.js Guide
 
@@ -36,12 +35,12 @@ We create a trailing stop anytime we make a purchase according to the various in
 this.stopLoss.create(somePercentage, currentPrice);
 ```
 
-We destroy our trailing stop after any time we call ```this.advice('short')``` 
+We destroy our trailing stop after any time we call ```this.advice('short')```
 
 ```javascript
 this.stopLoss.destroy();
 ```
-We must also check on each candle to see if our trailing stop loss has triggered, we can do it like so: 
+We must also check on each candle to see if our trailing stop loss has triggered, we can do it like so:
 ```javascript
 strat.check = function(candle) {
 	const currentPrice = candle.close;
