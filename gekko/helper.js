@@ -1,36 +1,36 @@
 exports.trailingStopLoss = function() {
     
-    let _percentage = null;
-    let _prevPrice = null;
-    let _stopLoss = null;
-    let _isActive = false;
+    let percentage = null;
+    let prevPrice = null;
+    let stopLoss = null;
+    let isActive = false;
 
-    function initSettings(percentage, currentPrice) {
-        _percentage = (((100 - percentage)) / 100);
-        _prevPrice = currentPrice;
-        _stopLoss = calculateStopLoss(currentPrice);
-        _isActive = true;
+    function initSettings(percent, currentPrice) {
+        percentage = (((100 - percent)) / 100);
+        prevPrice = currentPrice;
+        stopLoss = calculateStopLoss(currentPrice);
+        isActive = true;
     };
 
     function isTriggered(currentPrice) {
-        if(_isActive)
-            return (_stopLoss > currentPrice);
+        if(isActive)
+            return (stopLoss > currentPrice);
     }
 
     function calculateStopLoss(currentPrice) {
-        return _percentage * currentPrice;
+        return percentage * currentPrice;
     };
 
     function resetSettings() {
-        _percentage, _prevPrice, _percentage, _stopLoss = null;
-        _isActive = false;
+        percentage, prevPrice, percentage, stopLoss = null;
+        isActive = false;
     };
     
     function printVariables() {
         return {
-            percentage : _percentage,
-            stoploss : _stopLoss,
-            active : _isActive
+            "percentage" : percentage,
+            "stoploss" : stopLoss,
+            "active" : isActive
         }
     };
 
@@ -42,47 +42,49 @@ exports.trailingStopLoss = function() {
         isTriggered : isTriggered,
     }
 };
+
 /**
  * We use this module to keep track of candle history.
  */
 exports.candleHistory = function() {
-    var _limit = null;
-    var _candles = [];
+    let limit = null;
+    let candles = [];
 
-    var initialise = function(limit) {
-        _limit = limit - 1;
+    function initialise (someLimit) {
+        limit = someLimit - 1;
     };
 
-    var _canAdd = function() {
-        return (_candles.length <= _limit);
+    function canAppend() {
+        return (candles.length <= limit);
     };
 
-    var addCandleToarray = function(candle) {
-        if (_canAdd())
-            _candles.push(candle);
+    function appendCandleToHistory(someCandle) {
+        if (canAppend())
+            candles.push(someCandle);
         else {
-            _candles.shift();
-            _candles.push(candle);
+            candles.shift();
+            candles.push(someCandle);
         }
+        return this;
     };
 
-    var isFull = function() {
-        return (_candles.length > _limit);
+    function checkIfCandleHistoryFull() {
+        return (candles.length > limit);
     };
 
-    var getCurrentCandles = function() {
-        return _candles;
+    function getCandleHistory() {
+        return candles;
     };
 
-    var getCurrentSize = function() {
-        return _candles.length;
+    function getCurrentSize () {
+        return candles.length;
     };
 
     return {
         init: initialise,
-        add: addCandleToarray,
-        get: getCurrentCandles,
-        full: isFull,
+        add: appendCandleToHistory,
+        get: getCandleHistory,
+        isFull: checkIfCandleHistoryFull,
         size: getCurrentSize
     }
 };

@@ -4,7 +4,7 @@
   "description": "The helper.js includes a collection of modules that I find myself creating each time I make a Gekko strategy.",
   "main": "helper.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --watch"
   },
   "repository": {
     "type": "git",
