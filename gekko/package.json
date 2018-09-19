@@ -1,0 +1,19 @@
+{
+  "name": "helper.js",
+  "version": "1.0.0",
+  "description": "The helper.js includes a collection of modules that I find myself creating each time I make a Gekko strategy.",
+  "main": "helper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloggy45/Gekko-Bot-Resources.git"
+  },
+  "author": "Paul Mcloughlin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cloggy45/Gekko-Bot-Resources/issues"
+  },
+  "homepage": "https://github.com/cloggy45/Gekko-Bot-Resources#readme"
+}
