@@ -7,7 +7,7 @@ $ git clone https://github.com/cloggy45/Gekko-Bot-Resources.git
 $ cp Gekko-Bot-Resources/gekko/* gekko -R
 $ cd gekko
 $ npm install
-
+```
 # helper.js Guide
 
 The ```helper.js``` includes a collection of modules that I find myself creating each time I make a strategy.
