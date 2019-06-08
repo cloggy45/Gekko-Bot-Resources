@@ -1,8 +1,8 @@
-const Helper = require('../gekko/helper.js');
+const Helper = require("../gekko/helper.js");
 
-describe('Helper', () => {
-    describe('Trailing Stoploss', () => {
-        let trailingStopLoss = null;
+describe("Helper", () => {
+    describe("Trailing Stoploss", () => {
+        let trailingStopLoss = 0;
 
         beforeEach(() => {
             trailingStopLoss = Helper.trailingStopLoss();
@@ -13,32 +13,36 @@ describe('Helper', () => {
             trailingStopLoss.destroy();
         });
 
-        it('Should return trailingStopLoss object', () => {
-            expect(typeof trailingStopLoss).toEqual('object');
+        it("Should return trailingStopLoss", () => {
+            expect(typeof trailingStopLoss).toEqual("object");
         });
 
-        it('isTriggered() should return true when stoploss is greater than current price', () => {
+        it("Should return true when stoploss is greater than current price", () => {
             expect(trailingStopLoss.isTriggered(89)).toEqual(true);
         });
 
-        it('isTriggered() should return false when stoploss is equal to current price', () => {
+        it("Should return false when stoploss is equal to current price", () => {
             expect(trailingStopLoss.isTriggered(90)).toEqual(false);
         });
-        it('isTriggered() should return false when stoploss is less than current price', () => {
+
+        it("Should return false when stoploss is less than current price", () => {
             expect(trailingStopLoss.isTriggered(95)).toEqual(false);
         });
-        it('currentState() should return object showing internal state', () => {
+
+        it("Should return object showing internal state", () => {
             const mockState = {
-              percentage : 0.9,
-              stoploss : 90,
-              active : true
+                percentage: 0.9,
+                stoploss: 90,
+                active: true
             };
+
             expect(trailingStopLoss.log()).toEqual(mockState);
         });
     });
 
     describe("CandleHistory", () => {
         let candleHistory;
+
         beforeEach(() => {
             candleHistory = Helper.candleHistory();
         });
@@ -47,30 +51,32 @@ describe('Helper', () => {
             candleHistory = null;
         });
 
-        it('add() should append a new candle to history', () => {
-            const limit = 3
-            candleHistory.init(limit);
-            candleHistory.add('alpha').add('bravo');
-            expect(candleHistory.get()).toEqual(['alpha', 'bravo']);
-            candleHistory.add('charlie');
-            expect(candleHistory.get()).toEqual(['alpha', 'bravo', 'charlie'])
+        it("Should append a new candle to candle history", () => {
+            candleHistory.init(3);
+
+            candleHistory.add("alpha").add("bravo");
+
+            expect(candleHistory.get()).toEqual(["alpha", "bravo"]);
+            candleHistory.add("charlie");
+            expect(candleHistory.get()).toEqual(["alpha", "bravo", "charlie"]);
         });
 
-        it('isFull() should return "true" if full', () => {
-           const limit = 2;
-            candleHistory.init(limit);
-            candleHistory.add('alpha').add('bravo');
+        it('Should return trie if candle history is full', () => {
+            candleHistory.init(2);
+
+            candleHistory.add("alpha").add("bravo");
+
             expect(candleHistory.isFull()).toEqual(true);
         });
 
-        it('init() should set the size limit of the history', () => {
-            const limit = 10;
-            candleHistory.init(limit);
-            for(let i=0;i<limit;i++) {
+        it("Should set the size limit of the history", () => {
+            candleHistory.init(10);
+
+            for (let i = 0; i < 10; i++) {
                 candleHistory.add([]);
             }
-            expect(candleHistory.size()).toBe(limit);
 
+            expect(candleHistory.size()).toBe(10);
         });
     });
 });
