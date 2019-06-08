@@ -27,6 +27,6 @@
   },
   "homepage": "https://github.com/cloggy45/Gekko-Bot-Resources#readme",
   "devDependencies": {
-    "jest": "^23.6.0"
+    "jest": "^24.8.0"
   }
 }
