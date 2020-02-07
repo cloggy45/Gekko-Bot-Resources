@@ -10,18 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/cloggy45/Gekko-Bot-Resources.git"
   },
-  "dependencies": {
-    "convnetjs": "0.3.0",
-    "zero-fill": "2.2.3",
-    "stats-lite": "2.2.0",
-    "numbro": "2.1.0",
-    "mathjs": "5.1.2",
-    "cluster": "0.7.7",
-    "lodash.ismatch": "4.4.0",
-    "gauss": "0.2.12"
-  },
   "author": "Paul Mcloughlin",
   "license": "ISC",
+  "engines": {
+    "node": ">=8.11.2"
+  },
   "bugs": {
     "url": "https://github.com/cloggy45/Gekko-Bot-Resources/issues"
   },
@@ -30,3 +23,5 @@
     "jest": "^24.8.0"
   }
 }
+
+\
